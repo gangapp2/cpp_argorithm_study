@@ -11,8 +11,8 @@ int main()
 
 	day += (v - a) / (a - b);
 
-	if ((v - a) % (a - b))
+	if ((v - a) % (a - b)) // 달팽이가 도착점을 지나치는 경우
 		cout << day + 1;
 	else
-		cout << day;
+		cout << day;	// 달팽이가 도착점에 딱 맞게 도달하는 경우
 }
