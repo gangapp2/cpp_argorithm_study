@@ -16,28 +16,25 @@ int main()
 	}
 
 	int check = sum - 100;
-	bool found = false;
 
-	for (int i = 0; i < N-1 && !found; i++)
+	sort(dwarfs, dwarfs + N);
+
+
+	for (int i = 0; i < N-1; i++)
 	{
 		for (int j = i + 1; j < N; j++)
 		{
 			if (dwarfs[i] + dwarfs[j] == check)
 			{
-				dwarfs[i] = dwarfs[j] = -1;
-				found = true;
-				break;
+				for (int k = 0; k < N; k++)
+				{
+					if (k == i || k == j)
+						continue;
+					cout << dwarfs[k] << endl;
+				}
+				return 0;
 			}
 		}
 	}
 
-	sort(dwarfs, dwarfs+N);
-
-	for (int i = 0; i < N; i++)
-	{
-		if (dwarfs[i] != -1)
-		{
-			cout << dwarfs[i] << endl;
-		}
-	}
 }
