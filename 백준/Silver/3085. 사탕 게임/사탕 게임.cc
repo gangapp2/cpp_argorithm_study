@@ -23,8 +23,7 @@ void Check()
 				cnt++;
 			else
 			{
-				if (cnt > ans)
-					ans = cnt;
+		
 				cnt = 1; // 다르면 1로 초기화
 			}
 
@@ -33,6 +32,7 @@ void Check()
 			c = Board[i][j]; // 다음 인접한 글자와 비교해야 하므로 c를 현재 인덱스의 값으로 초기화해줌
 			
 		}
+
 		cnt = 1;
 	}
 
@@ -46,8 +46,7 @@ void Check()
 				cnt++;
 			else
 			{
-				if (cnt > ans)
-					ans = cnt;
+	
 				cnt = 1; // 다르면 1로 초기화
 			}
 
