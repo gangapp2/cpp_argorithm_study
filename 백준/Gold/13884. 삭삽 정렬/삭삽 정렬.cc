@@ -1,109 +1,125 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <unordered_set>
-#include <sstream>
-
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include <string>
 using namespace std;
 
-stringstream out;
 
-unordered_set<int> us;
+struct dataset
+{
+	int num;
+	int size;
+	int ans;
+};
 
-int visited[1006] = { 0 };
+vector<dataset> dSet;
+vector<vector<int>> arr;
+vector<vector<int>> arr_tmp; // 오름차순으로 정렬된 배열 
+vector<vector<int>> arr_rank; // 중복이 제거된 순위 배열
 
-vector<int> vecs;
-
-int findNextMin(int mind) {
-	us.erase(mind);
-	int NextMin = 2147000000;
-	for (int a : us) {
-		NextMin = min(NextMin, a);
-	}
-	return NextMin;
-
-}
-void visitedclaer(int N) {
-	for (int i = 0; i < N; ++i) {
-		visited[i] = 0;
-	}
-}
-
-int findLastMin(int mindata) { //
-	int index = 0;
-	for (int i = 0; i < vecs.size(); ++i) {
-		if (mindata == vecs[i]) index = i;
+int FindLastIndex(int min,vector<int> arr) // min값의 마지막 index를 리턴
+{
+	int index = -1;
+	for (int i = 0; i < arr.size(); i++)
+	{
+		if (arr[i] == min)
+			index = i;
 	}
 	return index;
-
 }
 
-
-int calcul( int mindata) {
-	int mind = mindata;
-	int ans = 0;
-	vector<int> temp;
-	unordered_set<int> tempSet;
-	int start = 0;
-		for (int i = 0; i < vecs.size(); ++i) {
-			if (mind == vecs[i]) {
-				visited[i] = 1;
-				int lastMinIndex = findLastMin(mind);
-
-				if (lastMinIndex == i) {
-					if (tempSet.find(mind) != tempSet.end()) {
-						for (int k = lastMinIndex+1; k < vecs.size(); ++k) {
-							if(!visited[k]){
-								visited[k] = 1;
-								ans++;
-							}
-						}
-						ans += temp.size();
-							return ans;
-					}// 앞에서 찾았고 마지막이면 -> 
-					mind = findNextMin(mind);
-				}
-
-			}
-			else {
-				if (!visited[i]) {
-					visited[i] = 1;
-					temp.push_back(vecs[i]);
-					tempSet.insert(vecs[i]);
-				}
-
-			}
-		}
-		ans += temp.size();
-	return ans;
-
+int CountMin(int min, int lastIndex, vector<int> arr) // 이전 최솟값의 마지막 인덱스 뒤에 나오는 현재 최솟값의 개수를 카운트
+{
+	int count = 0;
+	for (int i = lastIndex + 1; i < arr.size(); i++)
+	{
+		if (min == arr[i])
+			count++;
+	}
+	return count;
 }
+int main()
+{
+	int p; // 테스트 케이스의 수
+	cin >> p;
 
-vector<vector<int>> datasets;
-int main() {
-	
-	int P, K, N;
-	int data;
-	cin >> P;
-	for (int i = 0; i < P; ++i) {
-		cin >> K >> N;
-		int mindata = 2147000000;
-		datasets.push_back({});
-		vecs.clear();
-		for (int j = 0; j < N; j++) {
-			cin >> data;
-			us.insert(data);
-			mindata = min(mindata, data);
-			datasets[i].push_back(data);
+	for (int i = 0; i < p; i++)
+	{
+		dataset d;
+		cin >> d.num;
+		cin >> d.size;
+		dSet.push_back(d);
+		arr.push_back({}); // 이중 벡터 초기화
+		arr_tmp.push_back({});
+
+		for (int j = 0; j < d.size; j++)
+		{
+			int n;
+			cin >> n;
+			arr[i].push_back(n);
+			arr_tmp[i].push_back(n);
 		}
-		vecs = datasets[i];
-		out << i+1<<" "<<calcul(mindata) << endl; 
-		us.clear();
-		visitedclaer(N);
+	}
+	// 중복제거한 순위배열 생성
+	for (int i = 0; i < p; i++)
+	{
+		sort(arr_tmp[i].begin(), arr_tmp[i].end());
+		arr_rank.push_back({}); // 이중 벡터 초기화
 
+		int temp = arr_tmp[i][0];
+		arr_rank[i].push_back(temp);
+
+		for (int j = 0; j < arr_tmp[i].size(); j++)
+		{
+			if (arr_tmp[i][j] != temp)
+			{
+				temp = arr_tmp[i][j];
+				arr_rank[i].push_back(temp);
+			}
+		}
 	}
 
-	cout << out.str();
+	// 
+	for (int i = 0; i < p; i++)
+	{
+		int count = 0;
+		int index = -1;
+		int temp; 
+		bool isFound = false;
+		
+		for (int j = 0; j < arr_rank[i].size(); j++)
+		{
+			if (isFound)
+				break;
+			temp = arr_rank[i][j]; // 각 테스트 케이스의 최솟값
 
-	return 0;
+			for (int k = 0; k < arr[i].size(); k++)
+			{
+				if (temp == arr[i][k]) // 최솟값 발견
+				{
+
+					if (index < k) // 순행
+					{
+						index = k;
+						count++;
+					}
+					else // 역행
+					{
+						int preMin = arr_rank[i][j - 1]; // 현재 최솟값의 이전 최솟값
+						int lastIndex = FindLastIndex(preMin, arr[i]);
+						count += CountMin(temp, lastIndex, arr[i]);
+
+						isFound = true;
+						dSet[i].ans = arr[i].size() - count;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < p; i++)
+	{
+		cout << dSet[i].num << " " << dSet[i].ans << endl;
+	}
 }
