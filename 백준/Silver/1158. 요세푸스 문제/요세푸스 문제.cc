@@ -1,38 +1,27 @@
-#include<iostream>
-#include<list>
+#include <bits/stdc++.h>
 using namespace std;
-int main()
-{
-	int n, k;
-	cin >> n >> k;
-	
-	list<int> l;
 
-	for (int i = 1; i <= n; i++)
-		l.push_back(i);
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-	auto it = l.begin();
+    int n, k;
+    cin >> n >> k;
 
-	cout << "<";
+    vector<int> v(n);
+    iota(v.begin(), v.end(), 1); // 1..n
 
-	while (true)
-	{
-		for (int i = 0; i < k-1; i++)
-		{
-			++it;
-			if (it == l.end()) // 범위를 벗어나면 처음으로 돌아감
-				it = l.begin();
-		}
-		cout << *it;
-		it = l.erase(it); // 다음 원소의 iterator 반환
-		if (it == l.end())
-		{
-			if (l.size() == 0)
-				break;
-			it = l.begin();
-		}
-		cout << ", ";
-	}
-	cout << ">";
+    cout << "<";
 
+    int idx = 0; // 현재 가리키는 위치(다음 제거 시작점)
+    while (!v.empty()) {
+        idx = (idx + k - 1) % v.size(); // k번째 사람의 인덱스
+        cout << v[idx];
+        v.erase(v.begin() + idx);       // 제거 (다음 시작점은 idx 그대로)
+
+        if (!v.empty()) cout << ", ";
+    }
+
+    cout << ">";
+    return 0;
 }
