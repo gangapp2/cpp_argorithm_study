@@ -4,40 +4,45 @@ using namespace std;
 
 int main()
 {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0);
-
 	int n;
 	cin >> n;
-	
-	int temp;
-	vector<pair<int, int>> v;
-	for (int i = 0; i < n; i++)
+
+	vector<pair<int,int>> vec(n);
+
+	for (int i = 0; i < vec.size(); i++)
 	{
-		cin >> temp;
-		v.push_back(make_pair(temp, i + 1)); // first = 종이 값, second = 풍선 번호
+		int num;
+		cin >> num;
+		vec[i].first = num;
+		vec[i].second = i + 1;
 	}
 
 	int index = 0;
 	int next;
 
-	while (!v.empty())
+	while (!vec.empty())
 	{
-		cout << v[index].second;
-		next = v[index].first;
+		cout << vec[index].second;
+		next = vec[index].first;
 
-		if (next > 0) // 종이에서 나온 값이 양수면 한칸 적게 이동해야함(인덱스가 1 줄어든 상태이므로)
+		if (next > 0)
 			next -= 1;
+		
+		vec.erase(vec.begin() + index);
 
-		v.erase(v.begin() + index);
+		int size = vec.size();
 
-		int size = v.size();
 		if (size == 0)
 			break;
+
+
 		index += next;
-		
+		// 종이에 적힌 값이 아주 작은 음수거나 아주 큰 양수일때 그 범위를 0 ~ size-1 로 줄임
 		index = (index % size + size) % size;
+
+
 
 		cout << " ";
 	}
+	return 0;
 }
