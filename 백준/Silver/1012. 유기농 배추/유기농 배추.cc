@@ -6,12 +6,18 @@ vector<vector<int>> vec;
 vector<vector<bool>> visited;
 int cnt = 0;
 int t, m, n, k;
+int dx[4] = { 0, 0, 1, -1 }; // 상하좌우를 배열의 인덱스 값으로 표현
+int dy[4] = { 1, -1, 0, 0 };
 
 bool CanGo(int y, int x)
 {
 	if (x < 0 || x >= m)
 		return false;
 	if (y < 0 || y >= n)
+		return false;
+	if (vec[y][x] != 1)
+		return false;
+	if (visited[y][x])
 		return false;
 
 	return true;
@@ -20,18 +26,11 @@ void Dfs(int y, int x)
 {
 	visited[y][x] = true;
 
-	// x, y값이 +-1 인 곳의 배열 값이 1인지 검사
-	if (CanGo(y, x + 1) && vec[y][x+1] == 1 && !visited[y][x + 1])
-		Dfs(y, x + 1);
-
-	if (CanGo(y, x - 1) && vec[y][x - 1] == 1 && !visited[y][x - 1])
-		Dfs(y, x - 1);
-
-	if (CanGo(y + 1, x) && vec[y + 1][x] == 1 && !visited[y + 1][x])
-		Dfs(y + 1, x);
-
-	if (CanGo(y - 1, x) && vec[y - 1][x] == 1 && !visited[y - 1][x])
-		Dfs(y - 1, x);
+	for (int i = 0; i < 4; i++)
+	{
+		if (CanGo(y + dy[i], x + dx[i]))
+			Dfs(y + dy[i], x + dx[i]);
+	}
 }
 int main()
 {
