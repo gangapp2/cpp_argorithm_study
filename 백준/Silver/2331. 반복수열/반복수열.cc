@@ -1,44 +1,60 @@
-#include <iostream>
-#include <cmath>
+#include<iostream>
+#include<stack>
+#include<cmath>
+#include<vector>
+using namespace std;
 
-#define MAX 295246       
+#define MAX 236196
 
-int visited[MAX] = {0,};     // 전부 0으로 초기화
-int P;                       
+int p;
+vector<bool> visited;
+vector<int> dist;
 
-void dfs(int x) 
-{            // dfs 함수 
-    
-    if (visited[x] == 2) 
-        return ;       // 반복순열의 시작이라면 탐색 종료
+int nextValue(int a)
+{
+	stack<int> s;
+	int ret = 0;
+	while (a > 0)
+	{
+		s.push(a % 10);
+		a /= 10;
+	}
 
-    visited[x] += 1;                    
+	int size = s.size();
+	for (int i = 0; i < size; i++)
+	{
+		ret += pow(s.top(), p);
+		s.pop();
+	}
 
-    int result = 0;                      
-    while (x)
-    {
-        result += (int)pow( (x%10),P );
-        x /= 10;
-    }
-
-    dfs(result);
+	return ret;
 }
 
-int main(void) 
+void Dfs(int a)
 {
-    int A;
-    std::cin >> A >> P;
+	visited[a] = true;
 
-    dfs(A);
-    int result = 0;
-    
-    for (int i = 0; i < MAX; i++) 
-    {
-        if (visited[i] == 1) 
-            result++;
-    }
-    
-    std::cout << result << "\n";
+	int nextV = nextValue(a);
 
-    return 0;
+	if (visited[nextV])
+	{
+		cout << dist[nextV];
+		return;
+	}
+
+	dist[nextV] = dist[a] + 1;
+
+	Dfs(nextV);
+}
+
+int main()
+{
+	int a;
+	cin >> a >> p;
+
+	visited.resize(MAX + 1, false);
+	dist.resize(MAX + 1);
+	dist[a] = 0;
+
+	Dfs(a);
 }
