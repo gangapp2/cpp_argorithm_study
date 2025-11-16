@@ -7,7 +7,7 @@ using namespace std;
 int k, w, h;
 
 vector<vector<int>> board;
-int dist[201][201][31];
+int dist[201][201];
 bool discovered[201][201][31] = { false, };
 
 int dx_monkey[4] = {1,-1,0,0};
@@ -57,7 +57,7 @@ void Bfs(int x, int y)
 
 	q.push(make_pair(make_pair(x,y),0));
 
-	dist[y][x][0] = 0;
+	dist[y][x] = 0;
 	discovered[y][x][0] = true;
 
 	while (!q.empty())
@@ -69,6 +69,12 @@ void Bfs(int x, int y)
 		int cy = p.first.second;
 		int ck = p.second;
 
+		if (cx == w - 1 && cy == h - 1) // 시작 시점에 비교하여 (1,1)인 경우도 바로 체크
+		{
+			cout << dist[cy][cx];
+			return;
+		}
+
 		// 원숭이 움직임
 		for (int i = 0; i < 4; i++)
 		{
@@ -78,12 +84,7 @@ void Bfs(int x, int y)
 			if (Cango_M(nx, ny, ck))
 			{
 				discovered[ny][nx][ck] = true;
-				dist[ny][nx][ck] = dist[cy][cx][ck] + 1;
-				if (nx == w-1 && ny == h-1)
-				{
-					cout << dist[ny][nx][ck];
-					return;
-				}
+				dist[ny][nx] = dist[cy][cx] + 1;
 				q.push(make_pair(make_pair(nx, ny), ck));
 			}
 		}
@@ -99,12 +100,7 @@ void Bfs(int x, int y)
 				if (Cango_H(nx, ny, ck + 1))
 				{
 					discovered[ny][nx][ck + 1] = true;
-					dist[ny][nx][ck + 1] = dist[cy][cx][ck] + 1;
-					if (nx == w - 1 && ny == h - 1)
-					{
-						cout << dist[ny][nx][ck + 1];
-						return;
-					}
+					dist[ny][nx] = dist[cy][cx] + 1;
 					q.push(make_pair(make_pair(nx, ny), ck + 1));
 				}
 			}
@@ -124,15 +120,6 @@ int main()
 		{
 			cin >> board[i][j];
 		}
-	}
-
-	// 시작 == 도착인 경우
-	if (w == 1 && h == 1) {
-		if (board[0][0] == 0) 
-			cout << 0 << '\n';
-		else 
-			cout << -1 << '\n'; // 시작이 장애물이면 도달 불가
-		return 0;
 	}
 
 	Bfs(0, 0);
